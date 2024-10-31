@@ -36,11 +36,20 @@ module.exports.info = (req, res, next) => {
     .catch(next)
 }
 
-module.exports.delete = (req, res, next) => {
-  req.post.delete()
-    .then(() => res.status(204).send())
-    .catch(next)
-}
+module.exports.delete = async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const deletedPost = await Post.findByIdAndDelete(postId);
+
+    if (!deletedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    next(error); 
+  }
+};
 
 module.exports.create = (req, res, next) => {
   const data = { text } = req.body
