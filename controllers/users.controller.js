@@ -14,13 +14,14 @@ const userController = {
     const newUser = new User({ name, email, password: hashedPassword, bio, active:false });
 
     await newUser.save();
-    const user = await User.findOne({email});
-    res.status(201).json({ message: "User created successfully", id: user._id });
+    await User.findOne({_id: newUser._id});
+    res.status(201).json({ message: "User created successfully", id: newUser._id });
   },
 
   validateUser: async(req,res) => {
     const id =req.params.id
-    const user = await User.findOneAndUpdate(id, { active: true}, { new: true})
+    const user = await User.findOneAndUpdate({_id: id}, { active: true}, { new: true})
+    console.log(user)
     if(!user){
       res.json({error: true, message: 'user cannot be validate'})
     }
